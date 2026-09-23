@@ -35,12 +35,31 @@ test('bullets are one space, not the three turndown defaults to', () => {
   assert.equal(convert('<ul><li>a</li><li>b</li></ul>'), '- a\n- b');
 });
 
-test('nested lists indent by two', () => {
+test('nested lists indent by the width of the parent marker', () => {
   assert.equal(convert('<ul><li>a<ul><li>b</li></ul></li></ul>'), '- a\n  - b');
+  /* Two spaces under `1.` is not a nested list in CommonMark; GitHub flattens it. */
+  assert.equal(
+    convert('<ol><li>one<ol><li>nested<ol><li>deep</li></ol></li></ol></li><li>two</li></ol>'),
+    '1. one\n   1. nested\n      1. deep\n2. two',
+  );
+  assert.equal(
+    convert('<ol start="9"><li>nine<ul><li>x</li></ul></li><li>ten<ul><li>y</li></ul></li></ol>'),
+    '9. nine\n   - x\n10. ten\n    - y',
+  );
 });
 
 test('an ordered list honors its start attribute', () => {
   assert.equal(convert('<ol start="3"><li>three</li><li>four</li></ol>'), '3. three\n4. four');
+  assert.equal(convert('<ol start="0"><li>zero</li><li>one</li></ol>'), '0. zero\n1. one');
+  /* Negative and non-numeric starts are not valid Markdown; fall back to 1. */
+  assert.equal(convert('<ol start="-3"><li>a</li><li>b</li></ol>'), '1. a\n2. b');
+  assert.equal(convert('<ol start="x"><li>a</li></ol>'), '1. a');
+});
+
+test('a loose list item has empty blank lines, not runs of spaces', () => {
+  const markdown = convert('<ul><li><p>para one</p><p>para two</p></li><li><p>second</p></li></ul>');
+  assert.equal(markdown, '- para one\n\n  para two\n- second');
+  assert.doesNotMatch(markdown, /^[ \t]+$/m);
 });
 
 /* Single-tilde strikethrough is valid GFM but not universally recognized. */
@@ -71,6 +90,14 @@ test('headings use atx', () => {
 
 test('runs of blank lines are collapsed', () => {
   assert.doesNotMatch(convert('<p>a</p><div></div><div></div><p>b</p>'), /\n{3}/);
+});
+
+test('blank lines inside a fenced code block are content and are kept', () => {
+  assert.equal(convert('<pre><code>a\n\n\n\nb</code></pre>'), '```\na\n\n\n\nb\n```');
+  assert.equal(
+    convert('<ul><li>a<pre><code>x\n\n\ny</code></pre></li></ul>'),
+    '- a\n\n  ```\n  x\n\n\n  y\n  ```',
+  );
 });
 
 test('markup carrying no text converts to nothing', () => {
