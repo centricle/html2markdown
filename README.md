@@ -6,6 +6,20 @@ HTML in, GitHub-flavored Markdown out.
 npx @centricle/html2markdown page.html
 ```
 
+## Install
+
+```
+npm install -g @centricle/html2markdown
+```
+
+Or run it without installing, with `npx @centricle/html2markdown`. To work
+from a checkout instead:
+
+```
+git clone https://github.com/centricle/html2markdown.git
+cd html2markdown && npm install && npm link
+```
+
 ## Why another one
 
 **No pandoc.** This began as a shell script that shelled out to pandoc, which
@@ -83,6 +97,8 @@ npm test
 
 No browser, no network, no optional tooling, so every test runs everywhere and
 none of them skip.
+
+Bugs and ideas: [github.com/centricle/html2markdown/issues](https://github.com/centricle/html2markdown/issues).
 
 ## License
 
