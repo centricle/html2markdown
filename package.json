@@ -2,6 +2,7 @@
   "name": "@centricle/html2markdown",
   "version": "0.1.0",
   "description": "HTML to GitHub-flavored Markdown. No pandoc, no network.",
+  "author": "Kevin Smith <ksmith@centricle.com> (https://centricle.com)",
   "type": "module",
   "bin": {
     "html2markdown": "bin/html2markdown.js",
@@ -27,8 +28,16 @@
     "type": "git",
     "url": "git+https://github.com/centricle/html2markdown.git"
   },
+  "homepage": "https://github.com/centricle/html2markdown#readme",
+  "bugs": {
+    "url": "https://github.com/centricle/html2markdown/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
-    "test": "node --test test/*.test.js"
+    "test": "node --test test/*.test.js",
+    "prepublishOnly": "npm test"
   },
   "dependencies": {
     "turndown": "^7.2.4",
